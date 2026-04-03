@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="" class="text-decoration-none">{{ job.title }}</a></h5>
+        <p class="card-text"><strong>Description:</strong>{{ job.description }}</p>
+        <p class="card-text"><strong>Company:</strong>{{ job.company }}</p>
+        <p class="card-text"><strong>Location:</strong>{{ job.location }}</p>
+        <p class="card-text"><strong>Salary:</strong>${{ job.salary }}</p>
+        {% if user.profile.role == "seeker" %}
+          <a href="{% url 'apply-job' job.pk %}" class="btn btn-outline-primary">Apply</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}
