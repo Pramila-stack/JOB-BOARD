@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-iv#n^*!*z7&xbn%(k032($@^6^k#@n&33&bnke-@*ow*^)xj96
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,6 +79,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+import os
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
 }
 
 
@@ -132,3 +140,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pramilatmg.np@gmail.com'  # Your Gmail
 EMAIL_HOST_PASSWORD = 'ogte tvgd ylbu vymk' # The App Password you generated
 DEFAULT_FROM_EMAIL = 'Job Board <noreply@jobboard.com>'
+
+
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
