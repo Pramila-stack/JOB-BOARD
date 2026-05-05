@@ -1,63 +1,77 @@
 {% extends 'base.html' %}
+
 {% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold text-dark">Dashboard</h1>
+        <span class="text-muted">Welcome back, {{ user.username }}</span>
+    </div>
 
-<h1>Dashboard</h1>
+    {% if user.profile.role == "employer" %}
+        <h3 class="mb-4 text-primary">Your Posted Jobs</h3>
+        
+        {% for job in jobs %}
+        <div class="card shadow-sm border-0 rounded-4 mb-5">
+            <div class="card-header bg-white p-4 border-bottom-0">
+                <h4 class="fw-bold mb-1">{{ job.title }}</h4>
+                <p class="text-muted mb-0"><i class="bi bi-building"></i> {{ job.company }} | <i class="bi bi-geo-alt"></i> {{ job.location }}</p>
+            </div>
+            
+            <div class="card-body p-4">
+                <a href="{% url 'job-detail' job.pk %}" class="btn btn-primary btn-sm mb-4">View Full Listing</a>
 
-{% if user.profile.role == "employer" %}
-<h2>Your Posted Jobs</h2>
-{% for job in jobs %}
-<div class="card" style="border: 2px solid black;padding: 10px;margin: 10px;">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Applications</h5>
+                
+                {% for app in job.application_jobs.all %}
+                <div class="card bg-light border-0 p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1 fw-bold">{{ app.user.username }}</h6>
+                            <p class="text-muted small mb-1">Status: 
+                                <span class="badge {% if app.status == 'accepted' %}bg-success{% elif app.status == 'rejected' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ app.status|title }}
+                                </span>
+                            </p>
+                            <p class="small text-secondary italic mb-0">"{{ app.cover_letter|truncatechars:100 }}"</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ app.cv.url }}" class="btn btn-outline-dark btn-sm"><i class="bi bi-file-earmark-pdf"></i> View CV</a>
+                            <a href="{% url 'update' app.pk 'accepted' %}" class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i></a>
+                            <a href="{% url 'update' app.pk 'rejected' %}" class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No applications received yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
 
-    <p class="card-text"><strong>{{ job.title }}</strong></p>
-    <p class="card-text">{{ job.company }}|{{ job.location }}</p>
-    <p>
-        <a href="{% url 'job-detail' job.pk %}" class="btn btn-outline-primary">View</a>
-    </p>
+    {% else %}
+        <h3 class="mb-4 text-primary">Your Job Applications</h3>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for app in applications %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-4 p-4">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-bold">{{ app.job.title }}</h5>
+                        <span class="badge {% if app.status == 'accepted' %}bg-success{% elif app.status == 'rejected' %}bg-danger{% else %}bg-secondary{% endif %}">
+                            {{ app.status|title }}
+                        </span>
+                    </div>
+                    <p class="text-muted small">Applied at: {{ app.applied_at|date:"M d, Y" }}</p>
+                    
+                    <div class="mt-auto pt-3 border-top">
+                        <a href="{% url 'job-detail' app.job.pk %}" class="btn btn-outline-primary btn-sm">View Job</a>
+                        <a href="{{ app.cv.url }}" class="btn btn-outline-secondary btn-sm">View CV</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-    <h4>Applications</h4>
-    {% for app in job.application_jobs.all %}
-
-    <p class="card-text">{{ app.user.username }} - {{ app.status }}</p>
-    <p><strong>Cover Letter:</strong>{{ app.cover_letter }}</p>
-    <p>
-        <a href="{{ app.cv.url }}" class="btn btn-outline-primary">View CV</a>
-    </p>
-    <p>
-        <a href="{% url 'update' app.pk 'accepted' %}" class="btn btn-outline-primary">Accept</a>
-        <a href="{% url 'update' app.pk 'rejected' %}" class="btn btn-outline-danger">Reject</a>
-    </p>
-
-    {% endfor %}
 </div>
-{% endfor %}
-
-{% else %}
-<h2>Your Applications</h2>
-{% for app in applications %}
-<div class="card">
-    <p class="card-text"><strong>Job:</strong>
-        <a href="{% url 'job-detail' app.job.pk %}">{{ app.job.title }}</a>
-    <p><strong>Status:</strong>{{ app.status }}</p>
-    <p><strong>Applied at:</strong>{{ app.applied_at }}</p>
-    <p><strong>Your CV:</strong>
-        <a href="{{ app.cv.url }}" class="btn btn-outline-primary">View/Download</a>
-    </p>
-
-    </p>
-
-</div>
-{% endfor %}
-
-
-
-
-
-
-
-{% endif %}
-
-
-
-
-
 {% endblock content %}

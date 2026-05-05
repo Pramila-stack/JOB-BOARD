@@ -6,6 +6,7 @@ from job.forms import ApplicationForm, JobForm, SignupForm
 from job.models import Application, Job
 from django.db.models import Q
 from django.contrib.auth import login
+from .utils import send_notification_email
 
 
 
@@ -14,7 +15,7 @@ class JobListView(ListView):
     model = Job
     template_name = "job_list.html"
     context_object_name = "jobs"
-    paginate_by = 2
+    paginate_by = 3
 
     def get_queryset(self):
         queryset = Job.objects.all().order_by("-created_at")
@@ -69,7 +70,16 @@ class ApplyJobView(LoginRequiredMixin,CreateView):
             return redirect("dashboard")
         form.instance.user=user
         form.instance.job = job
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Notify Employer
+        send_notification_email(
+            subject=f"New Applicant for {self.object.job.title}",
+            template_name="new_applicant.html",
+            context={'applicant': self.request.user, 'job': self.object.job},
+            recipient_list=[self.object.job.posted_by.email]
+        )
+        return response
 
 class DashboardView(LoginRequiredMixin,TemplateView):
     template_name = "dashboard.html"
@@ -92,4 +102,13 @@ class UpdateStatusView(LoginRequiredMixin,View):
             return redirect("dashboard")
         app.status = status
         app.save()
+
+        # Notify Seeker
+        send_notification_email(
+            subject=f"Update on your application for {app.job.title}",
+            template_name="status_update.html",
+            context={'status': status, 'job': app.job},
+            recipient_list=[app.user.email]
+        )
+
         return redirect("dashboard")

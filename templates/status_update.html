@@ -1,0 +1,7 @@
+<div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd;">
+    <h2>Application Update</h2>
+    <p>Your application status for <strong>{{ job.title }}</strong> has been updated.</p>
+    <p>Current Status: <strong style="color: {% if status == 'accepted' %}green{% else %}red{% endif %};">
+        {{ status|title }}</strong>
+    </p>
+</div>

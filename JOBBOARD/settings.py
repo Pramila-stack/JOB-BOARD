@@ -122,3 +122,13 @@ LOGOUT_REDIRECT_URL = "/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "media"
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'pramilatmg.np@gmail.com'  # Your Gmail
+EMAIL_HOST_PASSWORD = 'ogte tvgd ylbu vymk' # The App Password you generated
+DEFAULT_FROM_EMAIL = 'Job Board <noreply@jobboard.com>'

@@ -1,26 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="bg-primary p-4 text-center">
+                    <h3 class="text-white fw-bold mb-0">Welcome Back</h3>
+                    <p class="text-white-50 small">Sign in to your account</p>
+                </div>
 
-{% if form.errors and form.non_field_errors %}
-    {{ form.non_field_errors }}
-{% endif %}
+                <div class="card-body p-4 p-md-5">
+                    
+                    {% if form.errors or form.non_field_errors %}
+                    <div class="alert alert-danger border-0 py-2 small" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i> Invalid username or password.
+                    </div>
+                    {% endif %}
 
-<form action="" method="POST">
-    {% csrf_token %}
-    <label for="username" class="form-label">Username</label>
-    {% if form.username.errors %}
-    {{ form.username.errors }}
-    {% endif %}
-    <input type="text" name="username" id="username" class="form-control" value="{{ form.username.value|default_if_none:'' }}">
+                    <form action="" method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label text-muted fw-semibold">Username</label>
+                            <input type="text" name="username" id="username" 
+                                   class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.username.value|default_if_none:'' }}"
+                                   placeholder="Enter your username">
+                        </div>
 
-    <label for="password" class="form-label">Password</label>
-    {% if form.password.errors %}
-    {{ form.password.errors }}
-    {% endif %}
-    <input type="password" name="password" id="password" class="form-control" value="{{ form.password.value|default_if_none:'' }}">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="password" class="form-label text-muted fw-semibold mb-0">Password</label>
+                                <a href="{% url 'password_reset' %}" class="small text-decoration-none text-primary">Forgot password?</a>
+                            </div>
+                            <input type="password" name="password" id="password" 
+                                   class="form-control form-control-lg {% if form.password.errors %}is-invalid{% endif %}" 
+                                   placeholder="••••••••">
+                        </div>
 
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
-<p>No account yet? <a href="{% url 'signup' %}" class="btn btn-outline-secondary">Signup</a> </p>
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm rounded-pill">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center border-top pt-4">
+                        <p class="text-muted small">
+                            Don't have an account? 
+                            <a href="{% url 'signup' %}" class="text-primary fw-bold text-decoration-none">Register here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 {% endblock content %}
