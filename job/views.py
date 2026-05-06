@@ -81,7 +81,7 @@ class ApplyJobView(LoginRequiredMixin,CreateView):
         )
         return response
 
-class DashboardView(LoginRequiredMixin,TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -89,9 +89,10 @@ class DashboardView(LoginRequiredMixin,TemplateView):
         user = self.request.user
 
         if user.profile.role == "employer":
-            context['jobs'] = Job.objects.filter(posted_by=user)
+            context['jobs'] = Job.objects.filter(posted_by=user).order_by('-created_at')
         else:
-            context['applications'] = Application.objects.filter(user=user)
+            context['applications'] = Application.objects.filter(user=user).order_by('-created_at')
+
         return context
     
 class UpdateStatusView(LoginRequiredMixin,View):
