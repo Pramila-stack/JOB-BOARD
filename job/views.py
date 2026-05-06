@@ -91,7 +91,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         if user.profile.role == "employer":
             context['jobs'] = Job.objects.filter(posted_by=user).order_by('-created_at')
         else:
-            context['applications'] = Application.objects.filter(user=user).order_by('-created_at')
+            context['applications'] = Application.objects.filter(user=user).order_by('-applied_at')
 
         return context
     
